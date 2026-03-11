@@ -1,0 +1,37 @@
+import { defineConfig } from 'vite'
+import path from 'path'
+import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [
+    // The React and Tailwind plugins are both required for Make, even if
+    // Tailwind is not being actively used – do not remove them
+    react(),
+    tailwindcss(),
+  ],
+  resolve: {
+    alias: {
+      // Alias @ to the src directory
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  build: {
+    // Enable minification
+    minify: 'esbuild',
+    // Split chunks for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-motion': ['motion', 'framer-motion'],
+          'vendor-leaflet': ['leaflet', 'react-leaflet'],
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tooltip'],
+        },
+      },
+    },
+    // Increase chunk size warning limit
+    chunkSizeWarningLimit: 1000,
+  },
+})
